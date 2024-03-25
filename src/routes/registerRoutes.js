@@ -3,8 +3,9 @@ const loginDB = require('../models/loginSchema');
 const registerDB = require('../models/registerSchema');
 const registerRoutes = express.Router();
 const bcrypt = require('bcryptjs');
-const staffDB = require('../models/staffSchema');
 const physicianDB = require('../models/doctorSchema');
+const doctorDB = require('../models/doctorSchema');
+const staffDB = require('../models/staffSchema');
 
 //User Registration
 registerRoutes.post('/user', async (req, res) => {
@@ -72,33 +73,32 @@ registerRoutes.post('/staff', async (req, res) => {
     console.log(req.body);
     const oldStaff = await loginDB.findOne({ email: req.body.email });
     if (oldStaff) {
-      // return res.status(400).json({
-      //   Success: false,
-      //   Error: true,
-      //   Message: 'Email already exist, Please Log In',
-      // });
-      const data = {
+      return res.status(400).json({
         Success: false,
         Error: true,
-        Message: 'Email already exist',
-      };
-      return res.render('add-staff', { data });
+        Message: 'Email already exist, Please Log In',
+      });
+      // const data = {
+      //   Success: false,
+      //   Error: true,
+      //   Message: 'Email already exist',
+      // };
+      // return res.render('add-staff', { data });
     }
     const oldStaffPhone = await staffDB.findOne({ phone: req.body.phone });
     if (oldStaffPhone) {
-      
-      // return res.status(400).json({
-      //   Success: false,
-      //   Error: true,
-      //   Message: 'Phone already exist',
-      // });
-
-      const data = {
+      return res.status(400).json({
         Success: false,
         Error: true,
         Message: 'Phone already exist',
-      };
-      return res.render('add-staff', { data });
+      });
+
+      // const data = {
+      //   Success: false,
+      //   Error: true,
+      //   Message: 'Phone already exist',
+      // };
+      // return res.render('add-staff', { data });
     }
 
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
@@ -119,31 +119,31 @@ registerRoutes.post('/staff', async (req, res) => {
     const result4 = await staffDB(reg).save();
 
     if (result4) {
-      // return res.json({
-      //   Success: true,
-      //   Error: false,
-      //   logdata: result3,
-      //   regdata: result4,
-      //   Message: 'Staff Registration Successful',
-      // });
-      const data = {
+      return res.json({
         Success: true,
         Error: false,
-        Message: 'Staff added successfully',
-      };
-      return res.render('add-staff', { data });
+        logdata: result3,
+        regdata: result4,
+        Message: 'Staff Registration Successful',
+      });
+      // const data = {
+      //   Success: true,
+      //   Error: false,
+      //   Message: 'Staff added successfully',
+      // };
+      // return res.render('add-staff', { data });
     } else {
-      // return res.json({
-      //   Success: false,
-      //   Error: true,
-      //   Message: 'Registration Failed',
-      // });
-      const data = {
+      return res.json({
         Success: false,
         Error: true,
-        Message: 'Failed adding staff ',
-      };
-      return res.render('add-staff', { data });
+        Message: 'Registration Failed',
+      });
+      // const data = {
+      //   Success: false,
+      //   Error: true,
+      //   Message: 'Failed adding staff ',
+      // };
+      // return res.render('add-staff', { data });
     }
   } catch (error) {
     console.error(error);

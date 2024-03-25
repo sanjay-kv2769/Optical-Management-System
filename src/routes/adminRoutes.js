@@ -11,6 +11,7 @@ require('dotenv').config();
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const productsDB = require('../models/productsSchema');
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -36,46 +37,45 @@ adminRoutes.get('/add-medicine', async (req, res) => {
   res.render('add-turf', { data });
 });
 
-adminRoutes.post('/add-med', upload.single('image'), async (req, res) => {
+adminRoutes.post('/add-prod', upload.single('image'), async (req, res) => {
   try {
-    const Medicine = {
-      medicine: req.body.medicine,
-      composition: req.body.composition,
+    const Product = {
       brand: req.body.brand,
-      strength: req.body.strength,
-      quantity: req.body.quantity,
-      purpose: req.body.purpose,
+      type: req.body.type,
+      model: req.body.model,
+      color: req.body.color,
+      material: req.body.material,
       price: req.body.price,
       description: req.body.description,
       image: req.file ? req.file.path : null,
     };
-    const Data = await medicineDB(Medicine).save();
+    const Data = await productsDB(Product).save();
     // console.log(Data);
     if (Data) {
-      const data = {
-        Success: true,
-        Error: false,
-        Message: 'Turf added successfully',
-      };
-      // return res.status(201).json({
+      // const data = {
       //   Success: true,
       //   Error: false,
-      //   data: Data,
-      //   Message: 'Medicine added successfully',
-      return res.render('add-turf', { data });
-      // });
+      //   Message: 'Turf added successfully',
+      // };
+      return res.status(201).json({
+        Success: true,
+        Error: false,
+        data: Data,
+        Message: 'Product added successfully',
+        // return res.render('add-turf', { data });
+      });
     } else {
-      // return res.status(400).json({
-      //   Success: false,
-      //   Error: true,
-      //   Message: 'Failed adding Medicine ',
-      // });
-      const data = {
+      return res.status(400).json({
         Success: false,
         Error: true,
-        Message: 'Failed adding turf ',
-      };
-      return res.render('add-turf', { data });
+        Message: 'Failed adding Product ',
+      });
+      // const data = {
+      //   Success: false,
+      //   Error: true,
+      //   Message: 'Failed adding turf ',
+      // };
+      // return res.render('add-turf', { data });
     }
   } catch (error) {
     return res.status(500).json({
@@ -87,9 +87,9 @@ adminRoutes.post('/add-med', upload.single('image'), async (req, res) => {
   }
 });
 
-adminRoutes.get('/view-med', async (req, res) => {
+adminRoutes.get('/view-prod', async (req, res) => {
   try {
-    const Data = await medicineDB.find();
+    const Data = await productsDB.find();
 
     if (Data) {
       const data = {};
@@ -109,6 +109,7 @@ adminRoutes.get('/view-med', async (req, res) => {
     //     Error: true,
     //     Message: 'Failed getting Products ',
     //   });
+    // }
   } catch (error) {
     const data = {
       Message: ' Error',
