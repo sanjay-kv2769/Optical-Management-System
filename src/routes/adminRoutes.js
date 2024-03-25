@@ -1,5 +1,5 @@
 const express = require('express');
-const medicineDB = require('../models/medicineSchema');
+const medicineDB = require('../models/productsSchema');
 const staffDB = require('../models/staffSchema');
 const loginDB = require('../models/loginSchema');
 const bcrypt = require('bcryptjs');

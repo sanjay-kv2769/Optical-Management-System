@@ -1,17 +1,73 @@
 const express = require('express');
-const medicineDB = require('../models/medicineSchema');
+const medicineDB = require('../models/productsSchema');
 const ordersDB = require('../models/ordersSchema');
 const { default: mongoose } = require('mongoose');
 const complaintsDB = require('../models/complaintSchema');
 const userRoutes = express.Router();
 
-userRoutes.post('/order-med/:login_id/:med_id', async (req, res) => {
+userRoutes.post('/add-cart/:login_id/:prod_id', async (req, res) => {
+  try {
+    const login_id = req.params.user_id;
+    const productId = req.params.prod_id;
+
+    const existingProduct = await cartData.findOne({
+      product_id: productId,
+      login_id: login_id,
+    });
+    if (existingProduct) {
+      const quantity = existingProduct.quantity;
+      const updatedQuantity = quantity + 1;
+
+      const updatedData = await cartData.updateOne(
+        { _id: existingProduct._id },
+        { $set: { quantity: updatedQuantity } }
+      );
+
+      return res.status(200).json({
+        success: true,
+        error: false,
+        data: updatedData,
+        message: 'incremented existing product quantity',
+      });
+    } else {
+      const cartDatas = {
+        login_id: login_id,
+        product_id: productId,
+        price: req.body.price,
+      };
+      const Data = await cartData(cartDatas).save();
+      if (Data) {
+        return res.status(200).json({
+          Success: true,
+          Error: false,
+          data: Data,
+          Message: 'Product added to cart successfully',
+        });
+      } else {
+        return res.status(400).json({
+          Success: false,
+          Error: true,
+          Message: 'Product adding failed',
+        });
+      }
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+userRoutes.post('/order-prod/:login_id/:prod_id', async (req, res) => {
   try {
     const loginId = req.params.login_id;
-    const medicineId = req.params.med_id;
+    const productId = req.params.prod_id;
     const Medicine = {
       login_id: loginId,
-      medicine_id: medicineId,
+      product_id: productId,
       unit: req.body.unit,
     };
     const Data = await ordersDB(Medicine).save();

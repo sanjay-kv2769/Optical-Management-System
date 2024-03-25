@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const physicianSchema = new mongoose.Schema({
+const doctorSchema = new mongoose.Schema({
   login_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'login_tb',
@@ -11,5 +11,5 @@ const physicianSchema = new mongoose.Schema({
   // designation: { type: String, required: true },
 });
 
-var physicianDB = mongoose.model('physician_tb', physicianSchema);
-module.exports = physicianDB;
+var doctorDB = mongoose.model('doctor_tb', doctorSchema);
+module.exports = doctorDB;

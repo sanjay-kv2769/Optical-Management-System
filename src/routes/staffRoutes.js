@@ -1,5 +1,5 @@
 const express = require('express');
-const medicineDB = require('../models/medicineSchema');
+const medicineDB = require('../models/productsSchema');
 const staffDB = require('../models/staffSchema');
 const ordersDB = require('../models/ordersSchema');
 const staffRoutes = express.Router();

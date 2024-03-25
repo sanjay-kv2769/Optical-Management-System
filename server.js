@@ -13,7 +13,7 @@ const staffRoutes = require('./src/routes/staffRoutes');
 
 mongoose
   .connect(
-    'mongodb+srv://maitexaSS:EPZh8v1m2U0thLE2@vproject.p2z0nmk.mongodb.net/Medicine_Management_System'
+    'mongodb+srv://maitexaSS:EPZh8v1m2U0thLE2@vproject.p2z0nmk.mongodb.net/Optical_Management_System'
   )
   .then(() => {
     console.log('Database Connected');

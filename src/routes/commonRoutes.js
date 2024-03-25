@@ -1,6 +1,6 @@
 const express = require('express');
-const medicineDB = require('../models/medicineSchema');
-const physicianDB = require('../models/physicianSchema');
+const medicineDB = require('../models/productsSchema');
+const doctorDB = require('../models/doctorSchema');
 const RegisterDB = require('../models/registerSchema');
 const { default: mongoose } = require('mongoose');
 const staffDB = require('../models/staffSchema');
@@ -35,7 +35,7 @@ commonRoutes.get('/view-med', async (req, res) => {
 
 commonRoutes.get('/view-physicians', async (req, res) => {
   try {
-    const physicianData = await physicianDB.aggregate([
+    const physicianData = await doctorDB.aggregate([
       {
         $lookup: {
           from: 'login_tbs',
@@ -185,7 +185,6 @@ commonRoutes.get('/profile/staff/:id', async (req, res) => {
     });
   }
 });
-
 
 commonRoutes.get('/profile/physician/:id', async (req, res) => {
   //   console.log(req.params.id);
@@ -360,6 +359,5 @@ commonRoutes.get('/profile/user/:id', async (req, res) => {
     });
   }
 });
-
 
 module.exports = commonRoutes;
