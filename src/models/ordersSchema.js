@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const ordersSchema = new mongoose.Schema({
-  medicine_id: {
+  product_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'medicine_tb',
     required: true,
@@ -10,16 +10,26 @@ const ordersSchema = new mongoose.Schema({
     ref: 'login_tb',
     required: true,
   },
-
-  unit: {
+  address: {
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    address: { type: String, required: true },
+    pincode: { type: String, default: '' },
+    state: { type: String, default: '' },
+    city: { type: String, default: '' },
+    landmark: { type: String, default: '' },
+    addressType: { type: String, required: true },
+  },
+  price: { type: Number, required: true },
+  quantity: { type: Number, default: 1, required: true },
+  subtotal: {
     type: Number,
-    required: true,
+    default: function () {
+      return this.price;
+    },
   },
-  status: {
-    type: String,
-    required: true,
-    default: 'processing',
-  },
+  order_date: { type: Date, require: true },
+  order_status: { type: String, default: 'pending', require: true },
 });
 
 var ordersDB = mongoose.model('orders_tb', ordersSchema);

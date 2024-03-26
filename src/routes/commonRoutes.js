@@ -58,7 +58,7 @@ commonRoutes.get('/view-prod/lens', async (req, res) => {
       ErrorMessage: error.message,
     });
   }
-});
+}); 
 commonRoutes.get('/view-prod/frame', async (req, res) => {
   try {
     const Data = await productsDB.find({ type: 'frame' });
