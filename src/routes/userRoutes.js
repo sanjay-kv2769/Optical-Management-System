@@ -63,6 +63,127 @@ userRoutes.post('/add-cart/:login_id/:prod_id', async (req, res) => {
   }
 });
 
+userRoutes.get('/view-cart/:login_id', async (req, res) => {
+  try {
+    const user_id = req.params.login_id;
+    // console.log(user_id);
+
+    const cartProducts = await cartDB.aggregate([
+      {
+        $lookup: {
+          from: 'products_tbs',
+          localField: 'product_id',
+          foreignField: '_id',
+          as: 'result',
+        },
+      },
+      {
+        $unwind: {
+          path: '$result',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          login_id: {
+            $first: '$login_id',
+          },
+          product_id: {
+            $first: '$product_id',
+          },
+          brand: {
+            $first: '$result.brand',
+          },
+          type: {
+            $first: '$result.type',
+          },
+          model: {
+            $first: '$result.model',
+          },
+          color: {
+            $first: '$result.color',
+          },
+          material: {
+            $first: '$result.material',
+          },
+          price: {
+            $first: '$result.price',
+          },
+          description: {
+            $first: '$result.description',
+          },
+          price: {
+            $first: '$price',
+          },
+          status: {
+            $first: '$status',
+          },
+          quantity: {
+            $first: '$quantity',
+          },
+          image: {
+            $first: {
+              $cond: {
+                if: { $ne: ['$result.image', null] },
+                then: '$result.image',
+                else: 'default_image_url',
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          subtotal: { $multiply: ['$price', '$quantity'] },
+        },
+      },
+      {
+        $match: {
+          login_id: new mongoose.Types.ObjectId(user_id),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: '$subtotal',
+          },
+          cartProducts: {
+            $push: {
+              _id: '$_id',
+              login_id: '$login_id',
+              product_id: '$product_id',
+              product_name: '$product_name',
+              sub_category: '$sub_category',
+              offer: '$offer',
+              price: '$price',
+              quantity: '$quantity',
+              subtotal: '$subtotal',
+              image: '$image',
+            },
+          },
+        },
+      },
+    ]);
+    if (cartProducts.length) {
+      return res.status(200).json({
+        Success: true,
+        Error: false,
+        data: cartProducts.length > 0 ? cartProducts : [],
+        Message: 'Product fetched from cart successfully',
+      });
+    } else {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'Product fetching from cart failed',
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 userRoutes.post('/place-order-prod/:login_id', async (req, res) => {
   try {
     // Retrieve data from the cart for the specified user ID
