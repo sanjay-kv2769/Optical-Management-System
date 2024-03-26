@@ -33,10 +33,88 @@ commonRoutes.get('/view-prod', async (req, res) => {
     });
   }
 });
-
-commonRoutes.get('/view-physicians', async (req, res) => {
+commonRoutes.get('/view-prod/lens', async (req, res) => {
   try {
-    const physicianData = await doctorDB.aggregate([
+    const Data = await productsDB.find({ type: 'lens' });
+    if (Data) {
+      return res.status(200).json({
+        Success: true,
+        Error: false,
+        data: Data,
+        Message: 'Products fetched successfully',
+      });
+    } else {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'Failed getting Products ',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+commonRoutes.get('/view-prod/frame', async (req, res) => {
+  try {
+    const Data = await productsDB.find({ type: 'frame' });
+    if (Data) {
+      return res.status(200).json({
+        Success: true,
+        Error: false,
+        data: Data,
+        Message: 'Products fetched successfully',
+      });
+    } else {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'Failed getting Products ',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+commonRoutes.get('/view-prod/sunglass', async (req, res) => {
+  try {
+    const Data = await productsDB.find({ type: 'sunglass' });
+    if (Data) {
+      return res.status(200).json({
+        Success: true,
+        Error: false,
+        data: Data,
+        Message: 'Products fetched successfully',
+      });
+    } else {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'Failed getting Products ',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+commonRoutes.get('/view-doctors', async (req, res) => {
+  try {
+    const doctorData = await doctorDB.aggregate([
       {
         $lookup: {
           from: 'login_tbs',
@@ -76,11 +154,11 @@ commonRoutes.get('/view-physicians', async (req, res) => {
       },
     ]);
 
-    if (physicianData.length > 0) {
+    if (doctorData.length > 0) {
       return res.json({
         Success: true,
         Error: false,
-        data: physicianData,
+        data: doctorData,
         Message: 'Success',
       });
     } else {

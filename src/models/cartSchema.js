@@ -22,5 +22,5 @@ const cartSchema = new mongoose.Schema({
   status: { type: String, default: 'pending', require: true },
 });
 
-var cartData = mongoose.model('cart_tb', cartSchema);
-module.exports = cartData;
+var cartDB = mongoose.model('cart_tb', cartSchema);
+module.exports = cartDB;

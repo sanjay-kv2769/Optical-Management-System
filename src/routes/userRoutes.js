@@ -3,6 +3,7 @@ const medicineDB = require('../models/productsSchema');
 const ordersDB = require('../models/ordersSchema');
 const { default: mongoose } = require('mongoose');
 const complaintsDB = require('../models/complaintSchema');
+const cartDB = require('../models/cartSchema');
 const userRoutes = express.Router();
 
 userRoutes.post('/add-cart/:login_id/:prod_id', async (req, res) => {
@@ -10,7 +11,7 @@ userRoutes.post('/add-cart/:login_id/:prod_id', async (req, res) => {
     const login_id = req.params.user_id;
     const productId = req.params.prod_id;
 
-    const existingProduct = await cartData.findOne({
+    const existingProduct = await cartDB.findOne({
       product_id: productId,
       login_id: login_id,
     });
@@ -18,7 +19,7 @@ userRoutes.post('/add-cart/:login_id/:prod_id', async (req, res) => {
       const quantity = existingProduct.quantity;
       const updatedQuantity = quantity + 1;
 
-      const updatedData = await cartData.updateOne(
+      const updatedData = await cartDB.updateOne(
         { _id: existingProduct._id },
         { $set: { quantity: updatedQuantity } }
       );
@@ -35,7 +36,7 @@ userRoutes.post('/add-cart/:login_id/:prod_id', async (req, res) => {
         product_id: productId,
         price: req.body.price,
       };
-      const Data = await cartData(cartDatas).save();
+      const Data = await cartDB(cartDatas).save();
       if (Data) {
         return res.status(200).json({
           Success: true,
