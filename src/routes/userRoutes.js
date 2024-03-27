@@ -1,10 +1,11 @@
 const express = require('express');
-const medicineDB = require('../models/productsSchema');
 const ordersDB = require('../models/ordersSchema');
 const { default: mongoose } = require('mongoose');
 const complaintsDB = require('../models/complaintSchema');
 const cartDB = require('../models/cartSchema');
 const addressDB = require('../models/addressSchema');
+const docBookDB = require('../models/docBookingSchema');
+const doctorDB = require('../models/doctorSchema');
 const userRoutes = express.Router();
 
 userRoutes.post('/add-cart/:login_id/:prod_id', async (req, res) => {
@@ -142,28 +143,6 @@ userRoutes.get('/view-cart/:login_id', async (req, res) => {
           login_id: new mongoose.Types.ObjectId(user_id),
         },
       },
-      // {
-      //   $group: {
-      //     _id: null,
-      //     total: {
-      //       $sum: '$subtotal',
-      //     },
-      //     cartProducts: {
-      //       $push: {
-      //         _id: '$_id',
-      //         login_id: '$login_id',
-      //         product_id: '$product_id',
-      //         product_name: '$product_name',
-      //         sub_category: '$sub_category',
-      //         offer: '$offer',
-      //         price: '$price',
-      //         quantity: '$quantity',
-      //         subtotal: '$subtotal',
-      //         image: '$image',
-      //       },
-      //     },
-      //   },
-      // },
     ]);
     console.log(cartProducts);
     if (cartProducts) {
@@ -380,6 +359,128 @@ userRoutes.get('/view-complaint/:login_id', async (req, res) => {
         Success: false,
         Error: true,
         Message: 'Failed fetching Complaint ',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+userRoutes.post('/doctor-booking/:login_id/:doc_id', async (req, res) => {
+  try {
+    const login_id = req.params.login_id;
+    const doctorId = req.params.doc_id;
+
+    function formatDate(date) {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero based
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+    const todayDate = formatDate(new Date());
+    console.log(todayDate);
+    const oldBooking = await docBookDB.findOne({
+      login_id: login_id,
+      doctor_id: doctorId,
+      date: todayDate,
+    });
+    if (oldBooking) {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'You have already booked this doctor today',
+      });
+    } else {
+      const bookingData = {
+        login_id: login_id,
+        doctor_id: doctorId,
+      };
+      const Data = await docBookDB(bookingData).save();
+      if (Data) {
+        return res.status(200).json({
+          Success: true,
+          Error: false,
+          data: Data,
+          Message: 'Doctor booked successfully',
+        });
+      } else {
+        return res.status(400).json({
+          Success: false,
+          Error: true,
+          Message: 'Doctor booking failed',
+        });
+      }
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+userRoutes.get('/view-doc-booking/:login_id', async (req, res) => {
+  try {
+    const user_id = req.params.login_id;
+
+    const bookData = await docBookDB.aggregate([
+      {
+        $lookup: {
+          from: 'doctor_tbs',
+          localField: 'doctor_id',
+          foreignField: 'login_id',
+          as: 'result',
+        },
+      },
+      {
+        $unwind: {
+          path: '$result',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          login_id: {
+            $first: '$login_id',
+          },
+          name: {
+            $first: '$result.name',
+          },
+          phone: {
+            $first: '$result.phone',
+          },
+          place: {
+            $first: '$result.place',
+          },
+        },
+      },
+      {
+        $match: {
+          login_id: new mongoose.Types.ObjectId(user_id),
+        },
+      },
+    ]);
+
+    console.log(bookData);
+    if (bookData) {
+      return res.status(200).json({
+        Success: true,
+        Error: false,
+        data: bookData,
+        Message: 'Booking fetched successfully',
+      });
+    } else {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'Booking fetching failed',
       });
     }
   } catch (error) {
