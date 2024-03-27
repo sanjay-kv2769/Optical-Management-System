@@ -142,30 +142,31 @@ userRoutes.get('/view-cart/:login_id', async (req, res) => {
           login_id: new mongoose.Types.ObjectId(user_id),
         },
       },
-      {
-        $group: {
-          _id: null,
-          total: {
-            $sum: '$subtotal',
-          },
-          cartProducts: {
-            $push: {
-              _id: '$_id',
-              login_id: '$login_id',
-              product_id: '$product_id',
-              product_name: '$product_name',
-              sub_category: '$sub_category',
-              offer: '$offer',
-              price: '$price',
-              quantity: '$quantity',
-              subtotal: '$subtotal',
-              image: '$image',
-            },
-          },
-        },
-      },
+      // {
+      //   $group: {
+      //     _id: null,
+      //     total: {
+      //       $sum: '$subtotal',
+      //     },
+      //     cartProducts: {
+      //       $push: {
+      //         _id: '$_id',
+      //         login_id: '$login_id',
+      //         product_id: '$product_id',
+      //         product_name: '$product_name',
+      //         sub_category: '$sub_category',
+      //         offer: '$offer',
+      //         price: '$price',
+      //         quantity: '$quantity',
+      //         subtotal: '$subtotal',
+      //         image: '$image',
+      //       },
+      //     },
+      //   },
+      // },
     ]);
-    if (cartProducts.length) {
+    console.log(cartProducts);
+    if (cartProducts) {
       return res.status(200).json({
         Success: true,
         Error: false,
@@ -180,7 +181,12 @@ userRoutes.get('/view-cart/:login_id', async (req, res) => {
       });
     }
   } catch (error) {
-    next(error);
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
   }
 });
 
