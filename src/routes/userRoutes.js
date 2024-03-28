@@ -7,6 +7,7 @@ const addressDB = require('../models/addressSchema');
 const docBookDB = require('../models/docBookingSchema');
 const doctorDB = require('../models/doctorSchema');
 const serviceBookDB = require('../models/serviceBookingSchema');
+const feedbacksDB = require('../models/feedbackSchema');
 const userRoutes = express.Router();
 
 userRoutes.post('/add-cart/:login_id/:prod_id', async (req, res) => {
@@ -591,6 +592,65 @@ userRoutes.get('/view-service-booking/:login_id', async (req, res) => {
         Success: false,
         Error: true,
         Message: 'Booking fetching failed',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+userRoutes.post('/add-feedback/:login_id', async (req, res) => {
+  try {
+    const Complaint = {
+      login_id: req.params.login_id,
+      feedback: req.body.feedback,
+    };
+    const Data = await feedbacksDB(Complaint).save();
+    // console.log(Data);
+    if (Data) {
+      return res.status(201).json({
+        Success: true,
+        Error: false,
+        data: Data,
+        Message: 'Complaint added successfully',
+      });
+    } else {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'Failed adding Complaint ',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+userRoutes.get('/view-feedback/:login_id', async (req, res) => {
+  try {
+    const Data = await feedbacksDB.find({ login_id: req.params.login_id });
+    if (Data) {
+      return res.status(201).json({
+        Success: true,
+        Error: false,
+        data: Data,
+        Message: 'Complaint fetched successfully',
+      });
+    } else {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'Failed fetching Complaint ',
       });
     }
   } catch (error) {
