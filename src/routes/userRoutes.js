@@ -644,13 +644,13 @@ userRoutes.get('/view-feedback/:login_id', async (req, res) => {
         Success: true,
         Error: false,
         data: Data,
-        Message: 'Complaint fetched successfully',
+        Message: 'Feedback fetched successfully',
       });
     } else {
       return res.status(400).json({
         Success: false,
         Error: true,
-        Message: 'Failed fetching Complaint ',
+        Message: 'Failed fetching Feedback ',
       });
     }
   } catch (error) {

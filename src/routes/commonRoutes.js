@@ -219,9 +219,9 @@ commonRoutes.get('/profile/staff/:id', async (req, res) => {
           place: {
             $first: '$place',
           },
-          designation: {
-            $first: '$designation',
-          },
+          // designation: {
+          //   $first: '$designation',
+          // },
           email: {
             $first: '$results.email',
           },
@@ -265,7 +265,7 @@ commonRoutes.get('/profile/staff/:id', async (req, res) => {
   }
 });
 
-commonRoutes.get('/profile/physician/:id', async (req, res) => {
+commonRoutes.get('/profile/doctor/:id', async (req, res) => {
   //   console.log(req.params.id);
   try {
     const id = req.params.id;
@@ -279,7 +279,7 @@ commonRoutes.get('/profile/physician/:id', async (req, res) => {
     //   });
     // }
 
-    const profileData = await physicianDB.aggregate([
+    const profileData = await doctorDB.aggregate([
       {
         $lookup: {
           from: 'login_tbs',

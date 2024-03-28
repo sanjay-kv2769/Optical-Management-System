@@ -7,6 +7,7 @@ const serviceBookSchema = new mongoose.Schema({
   },
   complaint: { type: String, required: true },
   date: { type: String, required: true },
+  status:{type:String,default:'pending'}
 });
 
 var serviceBookDB = mongoose.model('servicebooking_tb', serviceBookSchema);

@@ -10,6 +10,7 @@ const complaintsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  reply:{type:String,default:'...'}
 });
 
 var complaintsDB = mongoose.model('complaints_tb', complaintsSchema);
