@@ -10,8 +10,8 @@ const docBookingSchema = new mongoose.Schema({
     ref: 'doctors_tb',
     required: true,
   },
-  date:{type:String,required:true}
-
+  date:{type:String,required:true},
+status:{type:String,default:'pending'}
 });
 
 var docBookDB = mongoose.model('docbooking_tb', docBookingSchema);

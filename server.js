@@ -8,8 +8,9 @@ const registerRoutes = require('./src/routes/registerRoutes');
 const loginRoutes = require('./src/routes/loginRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const commonRoutes = require('./src/routes/commonRoutes');
-const physicianRoutes = require('./src/routes/physicianRoutes');
+const physicianRoutes = require('./src/routes/doctorRoutes');
 const staffRoutes = require('./src/routes/staffRoutes');
+const doctorRoutes = require('./src/routes/doctorRoutes');
 
 mongoose
   .connect(
@@ -34,7 +35,7 @@ app.use('/api', commonRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/staff', staffRoutes);
-app.use('/api/physician', physicianRoutes);
+app.use('/api/doctor', doctorRoutes);
 app.use('/api/register', registerRoutes);
 app.use('/api/login', loginRoutes);
 
