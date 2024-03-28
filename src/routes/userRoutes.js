@@ -6,6 +6,7 @@ const cartDB = require('../models/cartSchema');
 const addressDB = require('../models/addressSchema');
 const docBookDB = require('../models/docBookingSchema');
 const doctorDB = require('../models/doctorSchema');
+const serviceBookDB = require('../models/serviceBookingSchema');
 const userRoutes = express.Router();
 
 userRoutes.post('/add-cart/:login_id/:prod_id', async (req, res) => {
@@ -63,6 +64,44 @@ userRoutes.post('/add-cart/:login_id/:prod_id', async (req, res) => {
     });
   }
 });
+userRoutes.post(
+  '/update-cart-quantity/:login_id/:prod_id',
+  async (req, res) => {
+    try {
+      const login_id = req.params.login_id;
+      const productId = req.params.prod_id;
+      const quantity = req.body.quantity;
+
+      const updatedData = await cartDB.updateOne(
+        { product_id: productId, login_id: login_id },
+
+        { $set: { quantity: quantity } }
+      );
+
+      if (updatedData) {
+        return res.status(200).json({
+          Success: true,
+          Error: false,
+          data: updatedData,
+          Message: 'cart updated successfully',
+        });
+      } else {
+        return res.status(400).json({
+          Success: false,
+          Error: true,
+          Message: 'Cart update failed',
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        Success: false,
+        Error: true,
+        Message: 'Internal Server error',
+        ErrorMessage: error.message,
+      });
+    }
+  }
+);
 
 userRoutes.get('/view-cart/:login_id', async (req, res) => {
   try {
@@ -375,30 +414,22 @@ userRoutes.post('/doctor-booking/:login_id/:doc_id', async (req, res) => {
   try {
     const login_id = req.params.login_id;
     const doctorId = req.params.doc_id;
-
-    function formatDate(date) {
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero based
-      const year = date.getFullYear();
-      return `${day}-${month}-${year}`;
-    }
-    const todayDate = formatDate(new Date());
-    console.log(todayDate);
     const oldBooking = await docBookDB.findOne({
       login_id: login_id,
       doctor_id: doctorId,
-      date: todayDate,
+      date: req.body.date,
     });
     if (oldBooking) {
       return res.status(400).json({
         Success: false,
         Error: true,
-        Message: 'You have already booked this doctor today',
+        Message: 'You have already booked this doctor',
       });
     } else {
       const bookingData = {
         login_id: login_id,
         doctor_id: doctorId,
+        date: req.body.date,
       };
       const Data = await docBookDB(bookingData).save();
       if (Data) {
@@ -459,6 +490,9 @@ userRoutes.get('/view-doc-booking/:login_id', async (req, res) => {
           place: {
             $first: '$result.place',
           },
+          date: {
+            $first: '$date',
+          },
         },
       },
       {
@@ -469,6 +503,82 @@ userRoutes.get('/view-doc-booking/:login_id', async (req, res) => {
     ]);
 
     console.log(bookData);
+    if (bookData) {
+      return res.status(200).json({
+        Success: true,
+        Error: false,
+        data: bookData,
+        Message: 'Booking fetched successfully',
+      });
+    } else {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'Booking fetching failed',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+userRoutes.post('/service-booking/:login_id', async (req, res) => {
+  try {
+    const login_id = req.params.login_id;
+    const oldBooking = await serviceBookDB.findOne({
+      login_id: login_id,
+      date: req.body.date,
+      complaint: req.body.complaint,
+    });
+    if (oldBooking) {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'You have already booked this doctor',
+      });
+    } else {
+      const bookingData = {
+        login_id: login_id,
+        date: req.body.date,
+        complaint: req.body.complaint,
+      };
+      const Data = await serviceBookDB(bookingData).save();
+      if (Data) {
+        return res.status(200).json({
+          Success: true,
+          Error: false,
+          data: Data,
+          Message: 'Doctor booked successfully',
+        });
+      } else {
+        return res.status(400).json({
+          Success: false,
+          Error: true,
+          Message: 'Doctor booking failed',
+        });
+      }
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+userRoutes.get('/view-service-booking/:login_id', async (req, res) => {
+  try {
+    const user_id = req.params.login_id;
+
+    const bookData = await serviceBookDB.find({ login_id: user_id });
+
     if (bookData) {
       return res.status(200).json({
         Success: true,
