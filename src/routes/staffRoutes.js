@@ -9,6 +9,7 @@ require('dotenv').config();
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const serviceBookDB = require('../models/serviceBookingSchema');
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -109,6 +110,62 @@ staffRoutes.put('/attendance-staff/:id', async (req, res) => {
     });
   }
 });
+
+staffRoutes.get('/view-service-bookings', async (req, res) => {
+  try {
+    const bookData = await serviceBookDB.find();
+
+    if (bookData) {
+      return res.status(200).json({
+        Success: true,
+        Error: false,
+        data: bookData,
+        Message: 'Booking fetched successfully',
+      });
+    } else {
+      return res.status(400).json({
+        Success: false,
+        Error: true,
+        Message: 'Booking fetching failed',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+staffRoutes.put('/update-service-stat/:id/:booked_date', async (req, res) => {
+  try {
+    const loginId = req.params.id;
+    const bookedDate = req.params.booked_date;
+
+    const result = await serviceBookDB.updateOne(
+      { login_id: loginId, date: bookedDate },
+      { $set: { status: 'confirmed' } }
+    );
+
+    if (result.nModified === 0) {
+      return res.status(404).json({ message: 'Staff member not found' });
+    }
+
+    return res
+      .status(200)
+      .json({ message: 'Service status updated successfully'});
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
 // -----------------------------------------------------------------------------
 
 staffRoutes.put('/update-med-stock/:id', async (req, res) => {
