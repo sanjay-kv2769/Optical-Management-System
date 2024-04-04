@@ -1,19 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta name="description" content="Vali is a responsive and free admin theme built with Bootstrap 5, SASS and PUG.js. It's fully customizable and modular.">
-    <!-- Twitter meta-->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:site" content="@pratikborsadiya">
-    <meta property="twitter:creator" content="@pratikborsadiya">
-    <!-- Open Graph Meta-->
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Vali Admin">
-    <meta property="og:title" content="Vali - Free Bootstrap 5 admin theme">
-    <meta property="og:url" content="http://pratikborsadiya.in/blog/vali-admin">
-    <meta property="og:image" content="http://pratikborsadiya.in/blog/vali-admin/hero-social.png">
-    <meta property="og:description" content="Vali is a responsive and free admin theme built with Bootstrap 5, SASS and PUG.js. It's fully customizable and modular.">
-    <title>View Medicine</title>
+    <title>View Products</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,55 +23,52 @@
     <main class="app-content">
       <div class="app-title">
         <div>
-          <h1><i class="bi bi-table"></i>View Medicine</h1>
+          <h1><i class="bi bi-table"></i>View Products</h1>
         </div>
         <ul class="app-breadcrumb breadcrumb">
           <li class="breadcrumb-item"><i class="bi bi-house-door fs-6"></i></li>
-          <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-          <li class="breadcrumb-item active">View Medicine</li>
+          <li class="breadcrumb-item"><a href="/api/admin">Dashboard</a></li>
+          <li class="breadcrumb-item active">View Products</li>
         </ul>
       </div>
       <div class="row">
         <div class="col-md-12">
           <div class="tile">
-            <h3 class="tile-title">Medicine details</h3>
+            <h3 class="tile-title">Products details</h3>
             <table class="table table-striped">
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Medicine Name</th>
-                  <th>Composition</th>
-                  <th>Brand</th>
-                  <th>Strength</th>
-                  <th>Purpose</th>
-                  <th>Description</th>
-                  <th>Quantity</th>
-                  <th>stock</th>
+                  <th>Products Brand</th>
+                  <th>Type</th>
+                  <th>Model</th>
+                  <th>Color</th>
+                  <th>Material</th>
                   <th>Price</th>
+                  <th>Description</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 <% for(i=0;i<Data.length;i++){%>
                 <tr>
                   <td>1</td>
-                  <td><%= Data[i].medicine%></td>
-                  <td><%= Data[i].composition%></td>
                   <td><%= Data[i].brand%></td>
-                  <td><%= Data[i].strength%></td>
-                  <td><%= Data[i].purpose%></td>
-                  <td><%= Data[i].description%></td>
-                  <td><%= Data[i].quantity%></td>
-                  <td><%= Data[i].stock%></td>
+                  <td><%= Data[i].type%></td>
+                  <td><%= Data[i].model%></td>
+                  <td><%= Data[i].color%></td>
+                  <td><%= Data[i].material%></td>
                   <td><%= Data[i].price%></td>
+                  <td><%= Data[i].description%></td>
                   <td><img src="<%= Data[i].image%>" width="50" height="50" alt=""></td>
                     <form
-                  action="/api/admin/edit-med/<%= Data[i]._id %>"
+                  action="/api/admin/edit-prod/<%= Data[i]._id %>"
                 method="GET"
                   >
                   <td><button class="btn btn-warning">Update</button></td>
                   </form> 
                     <form
-                  action="/api/admin/delete-med/<%= Data[i]._id %>"
+                  action="/api/admin/delete-prod/<%= Data[i]._id %>"
                 method="GET"
                   >
                   <td><button class="btn btn-danger">Delete</button></td>

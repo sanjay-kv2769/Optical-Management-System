@@ -1,5 +1,4 @@
 const express = require('express');
-const medicineDB = require('../models/productsSchema');
 const staffDB = require('../models/staffSchema');
 const ordersDB = require('../models/ordersSchema');
 const productsDB = require('../models/productsSchema');
@@ -19,7 +18,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'vatakara projects/medicine management',
+    folder: 'vatakara projects/optical management',
   },
 });
 const upload = multer({ storage: storage });
@@ -43,14 +42,14 @@ staffRoutes.post('/new-prod', upload.single('image'), async (req, res) => {
       // const data = {
       //   Success: true,
       //   Error: false,
-      //   Message: 'Turf added successfully',
+      //   Message: 'product added successfully',
       // };
       return res.status(201).json({
         Success: true,
         Error: false,
         data: Data,
         Message: 'Product added successfully',
-        // return res.render('add-turf', { data });
+        // return res.render('add-product', { data });
       });
     } else {
       return res.status(400).json({
@@ -61,9 +60,9 @@ staffRoutes.post('/new-prod', upload.single('image'), async (req, res) => {
       // const data = {
       //   Success: false,
       //   Error: true,
-      //   Message: 'Failed adding turf ',
+      //   Message: 'Failed adding product ',
       // };
-      // return res.render('add-turf', { data });
+      // return res.render('add-product', { data });
     }
   } catch (error) {
     return res.status(500).json({

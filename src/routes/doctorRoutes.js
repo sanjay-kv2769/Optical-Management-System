@@ -1,5 +1,4 @@
 const express = require('express');
-const medicineDB = require('../models/productsSchema');
 const doctorRoutes = express.Router();
 require('dotenv').config();
 const multer = require('multer');
@@ -13,12 +12,14 @@ cloudinary.config({
   api_key: process.env.CLOUD_KEY,
   api_secret: process.env.CLOUD_SECRET,
 });
+
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'vatakara projects/medicine management',
+    folder: 'vatakara projects/optical management',
   },
 });
+
 const upload = multer({ storage: storage });
 
 doctorRoutes.get('/view-bookings/:id', async (req, res) => {
@@ -92,7 +93,6 @@ doctorRoutes.get('/view-bookings/:id', async (req, res) => {
 });
 
 
-
 doctorRoutes.put('/update-booking-stat/:id/:booked_date', async (req, res) => {
   try {
     const loginId = req.params.id;
@@ -119,4 +119,5 @@ doctorRoutes.put('/update-booking-stat/:id/:booked_date', async (req, res) => {
     });
   }
 });
+
 module.exports = doctorRoutes;

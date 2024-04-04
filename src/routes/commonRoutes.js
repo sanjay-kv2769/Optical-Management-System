@@ -1,5 +1,4 @@
 const express = require('express');
-const medicineDB = require('../models/productsSchema');
 const doctorDB = require('../models/doctorSchema');
 const RegisterDB = require('../models/registerSchema');
 const { default: mongoose } = require('mongoose');

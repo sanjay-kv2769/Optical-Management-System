@@ -57,18 +57,18 @@
     <main class="app-content">
       <div class="app-title">
         <div>
-          <h1><i class="bi bi-ui-checks"></i> Add Staff</h1>
+          <h1><i class="bi bi-ui-checks"></i> Add Products</h1>
         </div>
         <ul class="app-breadcrumb breadcrumb">
           <li class="breadcrumb-item"><i class="bi bi-house-door fs-6"></i></li>
           <li class="breadcrumb-item"><a href="/api/admin">Dashboard</a></li>
-          <li class="breadcrumb-item"><a href="">Add Staff</a></li>
+          <li class="breadcrumb-item"><a href="">Add Products</a></li>
         </ul>
       </div>
       <div class="row">
         <div class="col-md-6">
           <div class="tile">
-            <h3 class="tile-title">Add Staff</h3>
+            <h3 class="tile-title">Add Products</h3>
 
             <% if (data.Error==true) { %>
             <div class="alert alert-danger" role="alert">
@@ -81,72 +81,98 @@
             <% } %>
             <div class="tile-body">
               <form
-                action="/api/admin/staff"
+                action="/api/admin/add-prod"
                 method="post"
+                enctype="multipart/form-data"
               >
                 <div class="mb-3">
-                  <label class="form-label">Name</label>
+                  <label class="form-label">Products Brand</label>
                   <input
                     class="form-control"
                     type="text"
-                    name="name"
-                    placeholder="Enter name"
+                    name="brand"
+                    placeholder="Enter Product Brand"
                   />
                 </div>
-                <div class="mb-3">
-                  <label class="form-label">Email</label>
-                  <input
-                    class="form-control"
-                    type="text"
-                    name="email"
-                    placeholder="Enter email"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Phone</label>
-                  <input
-                    class="form-control"
-                    type="text"
-                    name="phone"
-                    placeholder="Enter phone"
-                  />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Place</label>
-                  <input
-                    class="form-control"
-                    type="text"
-                    name="place"
-                    placeholder="Enter Place"
-                  />
-                <div class="mb-3">
-                  <label class="form-label">Password</label>
-                  <input
-                    class="form-control"
-                    type="password"
-                    name="password"
-                    placeholder="Enter password"
-                  />
-                
-                
                 <!-- <div class="mb-3">
+                  <label class="form-label">Type</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="composition"
+                    placeholder="Enter composition"
+                  />
+                </div> -->
+                <div class="mb-3">
+    <label class="form-label">Type</label>
+    <select class="form-select" name="type" id="type">
+        <option value="" selected disabled>Select Type</option>
+        <option value="lens">Lens</option>
+        <option value="frame">Frame</option>
+        <option value="sunglass">Sunglass</option>
+    </select>
+</div>
+
+                <div class="mb-3">
+                  <label class="form-label">Model</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="model"
+                    placeholder="Enter model"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Color</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="color"
+                    placeholder="Enter color"
+                  />
+                <div class="mb-3">
+                  <label class="form-label">Material</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="material"
+                    placeholder="Enter Material"
+                  />
+                <!-- <div class="mb-3">
+                  <label class="form-label">Description</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="description"
+                    placeholder="Enter purpose"
+                  /> -->
+                <div class="mb-3">
+                  <label class="form-label">Price</label>
+                  <input
+                    class="form-control"
+                    type="number"
+                    name="price"
+                    placeholder="Enter Price"
+                  />
+                </div>
+                <div class="mb-3">
                   <label class="form-label">Description</label>
                   <textarea
                     class="form-control"
                     rows="4"
                     name="description"
-                    placeholder="Enter description"
+                    placeholder="Enter Description"
                   ></textarea>
-                </div> -->
+                </div>
 
-                <!-- <div class="mb-3">
+                <div class="mb-3">
                   <label class="form-label">Image</label>
                   <input
                     class="form-control"
                     name="image"
                     type="file"
                   />
-                </div> -->
+                </div>
                 <div class="tile-footer">
                   <button class="btn btn-primary" type="submit">
                     <i class="bi bi-check-circle-fill me-2"></i>Save
