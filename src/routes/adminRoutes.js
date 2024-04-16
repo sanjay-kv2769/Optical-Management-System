@@ -12,6 +12,7 @@ const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const productsDB = require('../models/productsSchema');
 const feedbacksDB = require('../models/feedbackSchema');
+const doctorDB = require('../models/doctorSchema');
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -280,6 +281,10 @@ adminRoutes.get('/delete-prod/:id', async (req, res) => {
 adminRoutes.get('/new-staff', async (req, res) => {
   const data = {};
   res.render('add-staff', { data });
+});
+adminRoutes.get('/new-doctor', async (req, res) => {
+  const data = {};
+  res.render('add-doctor', { data });
 });
 
 //Staff Registration
@@ -638,6 +643,373 @@ adminRoutes.get('/delete-staff/:login_id', async (req, res) => {
       return res.redirect('/api/admin/view-staff');
     } else {
       return res.redirect('/api/admin/view-staff');
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+//Doctor Registration
+adminRoutes.post('/doctor', async (req, res) => {
+  console.log(req.body);
+  try {
+    console.log(req.body);
+    const oldDoctor = await loginDB.findOne({ email: req.body.email });
+    if (oldDoctor) {
+      // return res.status(400).json({
+      //   Success: false,
+      //   Error: true,
+      //   Message: 'Email already exist, Please Log In',
+      // });
+      const data = {
+        Success: false,
+        Error: true,
+        Message: 'Email already exist',
+      };
+      return res.render('add-doctor', { data });
+    }
+    const oldDoctorPhone = await doctorDB.findOne({ phone: req.body.phone });
+    if (oldDoctorPhone) {
+      // return res.status(400).json({
+      //   Success: false,
+      //   Error: true,
+      //   Message: 'Phone already exist',
+      // });
+
+      const data = {
+        Success: false,
+        Error: true,
+        Message: 'Phone already exist',
+      };
+      return res.render('add-doctor', { data });
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 12);
+    let log = {
+      email: req.body.email,
+      password: hashedPassword,
+      rawpassword: req.body.password,
+      role: 3,
+    };
+    const result3 = await loginDB(log).save();
+    let reg = {
+      login_id: result3._id,
+      name: req.body.name,
+      phone: req.body.phone,
+      place: req.body.place,
+      // designation: req.body.designation,
+    };
+    const result4 = await doctorDB(reg).save();
+
+    if (result4) {
+      // return res.json({
+      //   Success: true,
+      //   Error: false,
+      //   logdata: result3,
+      //   regdata: result4,
+      //   Message: 'Staff Registration Successful',
+      // });
+      const data = {
+        Success: true,
+        Error: false,
+        Message: 'Doctor added successfully',
+      };
+      return res.render('add-doctor', { data });
+    } else {
+      // return res.json({
+      //   Success: false,
+      //   Error: true,
+      //   Message: 'Registration Failed',
+      // });
+      const data = {
+        Success: false,
+        Error: true,
+        Message: 'Failed adding doctor ',
+      };
+      return res.render('add-doctor', { data });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+    });
+  }
+});
+
+adminRoutes.get('/view-doctor', async (req, res) => {
+  try {
+    // const staffData = await staffDB.aggregate([
+    const Data = await doctorDB.aggregate([
+      {
+        $lookup: {
+          from: 'login_tbs',
+          localField: 'login_id',
+          foreignField: '_id',
+          as: 'result',
+        },
+      },
+      {
+        $unwind: {
+          path: '$result',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          login_id: {
+            $first: '$login_id',
+          },
+          name: {
+            $first: '$name',
+          },
+          phone: {
+            $first: '$phone',
+          },
+          place: {
+            $first: '$place',
+          },
+          designation: {
+            $first: '$designation',
+          },
+          email: {
+            $first: '$result.email',
+          },
+          rawpassword: {
+            $first: '$result.rawpassword',
+          },
+        },
+      },
+    ]);
+
+    // if (staffData.length > 0) {
+    if (Data.length > 0) {
+      // return res.json({
+      //   Success: true,
+      //   Error: false,
+      //   data: staffData,
+      //   Message: 'Success',
+      // });
+      const data = {};
+      return res.render('view-doctor', { Data, data });
+    } else {
+      // return res.json({
+      //   Success: false,
+      //   Error: true,
+      //   Message: 'Failed',
+      // });
+      const data = {
+        Message: ' Error',
+      };
+      const Data = [];
+      return res.render('view-doctor', { Data, data });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+adminRoutes.get('/view-doctor/:id', async (req, res) => {
+  try {
+    const user_id = req.params.id;
+    const doctorData = await doctorDB.aggregate([
+      {
+        $lookup: {
+          from: 'login_tbs',
+          localField: 'login_id',
+          foreignField: '_id',
+          as: 'result',
+        },
+      },
+      {
+        $unwind: {
+          path: '$result',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          login_id: {
+            $first: '$login_id',
+          },
+          name: {
+            $first: '$name',
+          },
+          phone: {
+            $first: '$phone',
+          },
+          place: {
+            $first: '$place',
+          },
+          designation: {
+            $first: '$designation',
+          },
+          email: {
+            $first: '$result.email',
+          },
+          rawpassword: {
+            $first: '$result.rawpassword',
+          },
+        },
+      },
+      {
+        $match: {
+          login_id: new mongoose.Types.ObjectId(user_id),
+        },
+      },
+    ]);
+
+    if (doctorData.length > 0) {
+      return res.json({
+        Success: true,
+        Error: false,
+        data: doctorData,
+        Message: 'Success',
+      });
+    } else {
+      return res.json({
+        Success: false,
+        Error: true,
+        Message: 'Failed',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+adminRoutes.get('/edit-doctor/:id', async (req, res) => {
+  try {
+    const Data = await doctorDB.findOne({ login_id: req.params.id });
+    var logData = await loginDB.findOne({ _id: req.params.id });
+    console.log(logData);
+    if (Data) {
+      const data = {};
+
+      res.render('edit-doctor', { Data, logData, data });
+    }
+  } catch (error) {
+    const data = {
+      Message: 'Error',
+    };
+    const Data = [];
+    return res.render('view-doctor', { Data, logData, data });
+  }
+});
+
+adminRoutes.get('/update-doctor/:id', async (req, res) => {
+  console.log('email', req.query.email);
+  try {
+    var loginID = req.params.id;
+    const previousData = await doctorDB.findOne({
+      login_id: loginID,
+    });
+    const previousloginData = await loginDB.findOne({
+      _id: loginID,
+    });
+    var Staff = {
+      login_id: previousData.login_id,
+      name: req.query.name ? req.query.name : previousData.name,
+      phone: req.query.phone ? req.query.phone : previousData.phone,
+      place: req.query.place ? req.query.place : previousData.place,
+      //  image:
+      //    req.file && req.file.length > 0
+      //      ? req.file.path)
+      //      : previousData.image,
+    };
+    if (req.query.password !== undefined) {
+      var hashedPassword = await bcrypt.hash(req.query.password, 10);
+    }
+    var StaffLoginDetails = {
+      email: req.query.email ? req.query.email : previousloginData.email,
+      password: req.query.password
+        ? hashedPassword
+        : previousloginData.password,
+      rawpassword: req.query.password
+        ? req.query.password
+        : previousloginData.rawpassword,
+    };
+
+    const Data = await doctorDB.updateOne(
+      { login_id: loginID },
+      { $set: Staff }
+    );
+    const LoginData = await loginDB.updateOne(
+      { _id: loginID },
+      { $set: StaffLoginDetails }
+    );
+    if (Data && LoginData) {
+      // const Data = await loginData.deleteOne({ _id: id });
+      console.log('Data', Data);
+      console.log('LoginData', LoginData);
+      return res.redirect('/api/admin/view-doctor');
+    } else {
+      // return res.status(400).json({
+      //   Success: false,
+      //   Error: true,
+      //   Message: 'Failed while updating Product',
+      // });
+      return res.redirect('/api/admin/view-doctor');
+    }
+    // if (Data && LoginData) {
+    //   return res.status(200).json({
+    //     Success: true,
+    //     Error: false,
+    //     data: Data,
+    //     loginData: LoginData,
+    //     Message: 'Staff details updated successfully ',
+    //   });
+    // } else {
+    //   return res.status(400).json({
+    //     Success: false,
+    //     Error: true,
+    //     Message: 'Failed while updating Staff details',
+    //   });
+    // }
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
+adminRoutes.get('/delete-doctor/:login_id', async (req, res) => {
+  try {
+    // const staffData = await staffDB.deleteOne({
+    const Data = await doctorDB.deleteOne({
+      login_id: req.params.login_id,
+    });
+    const logData = await loginDB.deleteOne({ _id: req.params.login_id });
+    // if (staffData && logData) {
+    //   return res.status(200).json({
+    //     Success: true,
+    //     Error: false,
+    //     Message: 'Deleted staff data',
+    //   });
+    // }
+    if (Data.deletedCount == 1 && logData.deletedCount == 1) {
+      return res.redirect('/api/admin/view-doctor');
+    } else {
+      return res.redirect('/api/admin/view-doctor');
     }
   } catch (error) {
     return res.status(500).json({

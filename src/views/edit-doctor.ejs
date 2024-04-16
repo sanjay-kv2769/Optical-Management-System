@@ -57,18 +57,18 @@
     <main class="app-content">
       <div class="app-title">
         <div>
-          <h1><i class="bi bi-ui-checks"></i> Edit Product</h1>
+          <h1><i class="bi bi-ui-checks"></i> Edit Doctor</h1>
         </div>
         <ul class="app-breadcrumb breadcrumb">
           <li class="breadcrumb-item"><i class="bi bi-house-door fs-6"></i></li>
           <li class="breadcrumb-item"><a href="/api/admin">Dashboard</a></li>
-          <li class="breadcrumb-item"><a href="">Edit Staff</a></li>
+          <li class="breadcrumb-item"><a href="">Edit Doctor</a></li>
         </ul>
       </div>
       <div class="row">
         <div class="col-md-6">
           <div class="tile">
-            <h3 class="tile-title">Edit Product</h3>
+            <h3 class="tile-title">Edit Doctor</h3>
 
             <% if (data.Error==true) { %>
             <div class="alert alert-danger" role="alert">
@@ -81,89 +81,63 @@
             <% } %>
             <div class="tile-body">
               <form
-                action="/api/admin/update-prod/<%=Data._id%>"
-                method="post"
+                action="/api/admin/update-doctor/<%=Data.login_id%>"
+                method="get"
                 enctype="multipart/form-data"
               >
                 <div class="mb-3">
-                  <label class="form-label">Product brand</label>
+                  <label class="form-label">Doctor Name</label>
                   <input
                     class="form-control"
                     type="text"
-                    name="brand"
-                    value="<%= Data.brand %>"
-                    placeholder="Enter Brand Name"
+                    name="name"
+                    value="<%= Data.name %>"
+                    placeholder="Enter Doctor Name"
                   />
                 </div>
                 <div class="mb-3">
-    <label class="form-label">Type</label>
-    <select class="form-select" name="type"  id="type">
-        <option   selected disabled><%= Data.type %></option>
-        <option value="lens">Lens</option>
-        <option value="frame">Frame</option>
-        <option value="sunglass">Sunglass</option>
-    </select>
-</div>
-                <div class="mb-3">
-                  <label class="form-label">Model</label>
+                  <label class="form-label">Phone</label>
                   <input
                     class="form-control"
                     type="text"
-                    name="model"
-                    value="<%= Data.model %>"
-
-                    placeholder="Enter brand"
+                    name="phone"
+                    value="<%= Data.phone %>"
+                    placeholder="Enter phone"
                   />
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Color</label>
+                  <label class="form-label">Place</label>
                   <input
                     class="form-control"
                     type="text"
-                    name="color"
-                    value="<%= Data.color %>"
+                    name="place"
+                    value="<%= Data.place %>"
 
-                    placeholder="Enter strength"
+                    placeholder="Enter place"
                   />
+                </div>
                 <div class="mb-3">
-                  <label class="form-label">Material</label>
+                  <label class="form-label">Email</label>
                   <input
                     class="form-control"
                     type="text"
-                    name="material"
-                    value="<%= Data.material %>"
+                    name="email"
+                    value="<%= logData?.email %>"
 
-                    placeholder="Enter quantity"
-                  />
-                <div class="mb-3">
-                  <label class="form-label">Price</label>
-                  <input
-                    class="form-control"
-                    type="text"
-                    name="price"
-                    value="<%= Data.price %>"
-
-                    placeholder="Enter purpose"
+                    placeholder="Enter Email"
                   />
                 
                 <div class="mb-3">
-                  <label class="form-label">Description</label>
-                  <textarea
-                    class="form-control"
-                    rows="4"
-                    name="description"
-                    placeholder="Enter description"
-                  ><%= Data.description %></textarea>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Image</label>
-                  <td><img src="<%= Data.image%>" width="50" height="50" alt=""></td>
+                  <label class="form-label">Password</label>
                   <input
                     class="form-control"
-                    name="image"
+                    type="text"
+                    name="password"
+                    value="<%= logData?.rawpassword %>"
 
-                    type="file"
+                    placeholder="Enter Password"
                   />
+                
                 </div>
                 <div class="tile-footer">
                   <button class="btn btn-primary" type="submit">

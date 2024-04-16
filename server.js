@@ -14,7 +14,8 @@ const doctorRoutes = require('./src/routes/doctorRoutes');
 
 mongoose
   .connect(
-    'mongodb+srv://maitexaSS:EPZh8v1m2U0thLE2@vproject.p2z0nmk.mongodb.net/Optical_Management_System'
+    'mongodb+srv://irshadvp800:1ubYxnRHZUZW7wEk@cluster0.5kelaxj.mongodb.net/optical_management'
+    // 'mongodb+srv://maitexaSS:EPZh8v1m2U0thLE2@vproject.p2z0nmk.mongodb.net/Optical_Management_System'
   )
   .then(() => {
     console.log('Database Connected');
