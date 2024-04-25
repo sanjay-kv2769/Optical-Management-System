@@ -199,4 +199,54 @@ staffRoutes.put('/update-service-stat/:id/:booked_date', async (req, res) => {
   }
 });
 
+staffRoutes.get('/view-orders', async (req, res) => {
+  try {
+    // const login_id = req.params.login_id;
+    // console.log(login_id);
+    const result = await ordersDB.aggregate([
+      // {
+      //   $match: {
+      //     login_id: new mongoose.Types.ObjectId(login_id),
+      //   },
+      // },
+      {
+        $lookup: {
+          from: 'products_tbs',
+          localField: 'product_id',
+          foreignField: '_id',
+          as: 'products_data',
+        },
+      },
+      {
+        $unwind: '$products_data',
+      },
+      {
+        $lookup: {
+          from: 'login_tbs',
+          localField: 'login_id',
+          foreignField: '_id',
+          as: 'login_data',
+        },
+      },
+      {
+        $unwind: '$login_data',
+      },
+    ]);
+    return res.status(200).json({
+      Success: true,
+      Error: false,
+      Data: result,
+      Message: 'Order data fetched successfully',
+    });
+    // return res.send(result);
+  } catch (error) {
+    return res.status(500).json({
+      Success: false,
+      Error: true,
+      Message: 'Internal Server Error',
+      ErrorMessage: error.message,
+    });
+  }
+});
+
 module.exports = staffRoutes;
